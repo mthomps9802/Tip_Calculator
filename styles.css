@@ -10,10 +10,12 @@
 }
 
 h1 {
-  font-size: 32px;          
-  font-weight: 700;
-  letter-spacing: 3px;      
+  font-size: 34px;          
+  letter-spacing: 10px;      
   text-align: center;       
+  background-color: #C6DBF0;
+  border-radius: 6px 6px 0 0;
+  padding-left: 8px;
 }
 
 
@@ -43,6 +45,34 @@ header {
     width: 100px;
     background-color: #8FA6CB;
 }
+
+.currency-tabs {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 20px 0 20px;
+}
+
+.currency-tabs button {
+  background-color:#C6DBF0;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.currency-tabs button.active {
+  background-color: #A0C4E2;
+  color: white;
+}
+
+.currency-tabs .tab:hover {
+  background: #9db8d8;
+}
+
 
 .container {
     background-color: #A0C4E2;
