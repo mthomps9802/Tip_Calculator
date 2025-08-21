@@ -9,7 +9,6 @@
 
         <title>Tip Calculator</title>
         <link rel="stylesheet" href="styles.css">
-        <script type="text/javascript" src="index.js" defer> </script>
     </head>
     <body>  
         <header>
@@ -24,7 +23,7 @@
                 <button data-currency ="USD" class="currency-tab active">$</button>
                 <button data-currency ="EUR" class="currency-tab">€</button>
                 <button data-currency ="GBP" class="currency-tab">£</button>
-                <button data-currency ="YEN" class="currency-tab">¥</button>
+                <button data-currency ="JPY" class="currency-tab">¥</button>
             </div>
 
             <div class="container">
@@ -67,19 +66,20 @@
                                 Tip Amount <br />
                                 <span>/Person</span>
                             </p>
-                                <div class="tipAmount">$5</div>
+                                <div class="tipAmount">$0.00</div>
                         </div>
                         <div class="desc">
                             <p>
                                 Total Amount <br />
                                 <span>/Person</span>
                             </p>
-                            <div class="tipAmount">$200</div>
+                            <div class="tipAmount">$0.00</div>
                             </div>
                         </div>
                         <button class="reset">Reset</button>
             </div>
         </main>
-
+            <script src="config.js"></script>
+            <script src="index.js"> </script>
     </body>
 </html>

@@ -6,7 +6,8 @@ console.log("JS file loaded!");
 //Currency Tabs
 const currencyTabs = document.querySelectorAll(".currency-tab")
 let currencySymbol = "$"; //The Default Currency for the calculator
-let api = "https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD";
+let exchangeRates = {};
+let api = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
 
 //Variables for the tip calculator
 const inputEl = document.querySelector("#input");
@@ -33,9 +34,11 @@ currencyTabs.forEach((tab) => {
 
         tab.classList.add("active");
 
-        currencySymbol = tab.innerText;
+        let selectedCurrency = tab.dataset.currency;
+        switchCurrency(selectedCurrency);
+        //currencySymbol = tab.innerText;
 
-        calculate();
+        //calculate();
     });
 });
 
@@ -63,7 +66,7 @@ function handleClick(e) {
 //Bill Value Input Validation
 function validateBill(){
     if (inputEl.value.includes(",")) {
-        inputEl.value.replace(",", ".");
+        inputEl.value = inputEl.value.replace(",", ".");
     }
     billVal = parseFloat(inputEl.value);
     calculate();
@@ -71,7 +74,7 @@ function validateBill(){
 
 //Custom Tip function
 function tipCustomVal(){
-    tipVal = parseFloat(customTip.value / 100);
+    tipVal = parseFloat(customTip.value) / 100 || 0;
 
     btnEl.forEach((btn) => {
         btn.classList.remove("active");
@@ -96,6 +99,49 @@ function setPeople() {
     calculate();
 }
 
+async function fetchExchangeRates() {
+    try {
+        const response = await fetch(api);
+        const data = await response.json();
+
+        if (data.result === "success") {
+            exchangeRates = data.conversion_rates;
+            console.log("Exchange rates successfully loaded:", exchangeRates);
+        }else{
+            console.error("Failed to load exchange rates:", data);
+        }
+    } catch (error){ 
+        console.error("Fetch failed:", error);
+    }
+}
+
+fetchExchangeRates();
+
+function switchCurrency(currency) {
+    if (!exchangeRates[currency]) return;
+
+
+    let tipInUSD = (billVal * tipVal) / peopleVal;
+    let totalInUSD = (billVal * (tipVal + 1)) / peopleVal;
+
+    let tipConverted = tipInUSD * exchangeRates[currency];
+    let totalConverted = totalInUSD * exchangeRates[currency];
+
+    totalVal[0].innerHTML = getSymbol(currency) + tipConverted.toFixed(2);
+    totalVal[1].innerHTML = getSymbol(currency) + totalConverted.toFixed(2);
+}
+
+
+function getSymbol(curr) {
+    switch (curr) {
+        case "USD": return "$";
+        case "EUR": return "€";
+        case "GBP": return "£";
+        case "JPY": return "¥";
+        default: return "";
+    }
+}
+
 
 //Calulate function
 function calculate() {
@@ -117,4 +163,6 @@ function handleReset() {
     btnEl[2].click();
     peopleEl.value = 1;
     setPeople();
+    currencySymbol = "$"; 
+    calculate();
 }
