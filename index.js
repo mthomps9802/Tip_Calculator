@@ -5,8 +5,6 @@ console.log("JS file loaded!");
 
 //Currency Tabs
 const currencyTabs = document.querySelectorAll(".currency-tab")
-let currencySymbol = "$"; //The Default Currency for the calculator
-let exchangeRates = {};
 let api = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
 
 //Variables for the tip calculator
@@ -18,6 +16,9 @@ const peopleEl = document.querySelector("#people");
 const totalVal = document.querySelectorAll(".tipAmount");
 const resetEl = document.querySelector(".reset");
 
+let currencySymbol = "$"; 
+let exchangeRates = {};
+let activeCurrency = "USD"; 
 let billVal = 0;
 let peopleVal = 1;
 let tipVal = 0.15;
@@ -27,6 +28,7 @@ peopleEl.addEventListener("input", setPeople);
 customTip.addEventListener("input", tipCustomVal);
 resetEl.addEventListener("click", handleReset);
 
+
 //Event listener for currency tabs
 currencyTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -34,11 +36,11 @@ currencyTabs.forEach((tab) => {
 
         tab.classList.add("active");
 
-        let selectedCurrency = tab.dataset.currency;
-        switchCurrency(selectedCurrency);
-        //currencySymbol = tab.innerText;
+        //Update the activecurrency and currency symbol
+        activeCurrency = tab.dataset.currency;
+        currencySymbol = getSymbol(activeCurrency);
+        calculate();
 
-        //calculate();
     });
 });
 
@@ -149,8 +151,14 @@ function calculate() {
         let tip = (billVal * tipVal) / peopleVal;
         let totalAmount = (billVal * (tipVal + 1)) / peopleVal;
         
-        totalVal[0].innerHTML = currencySymbol + tip.toFixed(2);
-        totalVal[1].innerHTML = currencySymbol + totalAmount.toFixed(2);
+        //If tab isnt USD this converts the values
+        if (activeCurrency !== "USD" && exchangeRates[activeCurrency]) {
+            tip *= exchangeRates[activeCurrency];
+            totalAmount *= exchangeRates[activeCurrency];
+        }
+
+        totalVal[0].innerHTML = getSymbol(activeCurrency) + tip.toFixed(2);
+        totalVal[1].innerHTML = getSymbol(activeCurrency) + totalAmount.toFixed(2);
         //console.log(totalVal);
     }
 }
@@ -158,11 +166,29 @@ function calculate() {
 
 //Reset function
 function handleReset() {
+    //Reset Sections
+
+    //Input Values
     inputEl.value = 0.0;
     validateBill();
+
+    //Tip Buttons
+    btnEl.forEach(btn => btn.classList.remove("active"));
     btnEl[2].click();
+
+    //People
     peopleEl.value = 1;
     setPeople();
-    currencySymbol = "$"; 
+
+    //Reset tab and currency to USD
+    currencyTabs.forEach(tab => tab.classList.remove("active"));
+    const usdTab = document.querySelector('.currency-tab[data-currency="USD"]');
+    if (usdTab) {
+        usdTab.classList.add("active");
+        switchCurrency("USD");
+        currencySymbol = "$"; 
+        activeCurrency = "USD";
+    }
+    //Updates Display 
     calculate();
 }
