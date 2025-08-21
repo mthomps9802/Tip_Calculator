@@ -69,7 +69,7 @@ header {
   color: white;
 }
 
-.currency-tabs .tab:hover {
+.currency-tabs .currency-tab:hover {
   background: #9db8d8;
 }
 

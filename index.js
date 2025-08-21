@@ -1,6 +1,12 @@
 "use strict";
+
 //Testing for interaction with the JS file
 console.log("JS file loaded!");
+
+//Currency Tabs
+const currencyTabs = document.querySelectorAll(".currency-tab")
+let currencySymbol = "$"; //The Default Currency for the calculator
+let api = "https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD";
 
 //Variables for the tip calculator
 const inputEl = document.querySelector("#input");
@@ -20,7 +26,20 @@ peopleEl.addEventListener("input", setPeople);
 customTip.addEventListener("input", tipCustomVal);
 resetEl.addEventListener("click", handleReset);
 
-//Event for button
+//Event listener for currency tabs
+currencyTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+        currencyTabs.forEach(t => t.classList.remove("active"));
+
+        tab.classList.add("active");
+
+        currencySymbol = tab.innerText;
+
+        calculate();
+    });
+});
+
+//Event listener for button
 btnEl.forEach((btn) => {
     btn.addEventListener("click", handleClick);
 });
@@ -84,8 +103,8 @@ function calculate() {
         let tip = (billVal * tipVal) / peopleVal;
         let totalAmount = (billVal * (tipVal + 1)) / peopleVal;
         
-        totalVal[0].innerHTML = "$" + tip.toFixed(2);
-        totalVal[1].innerHTML = "$" + totalAmount.toFixed(2);
+        totalVal[0].innerHTML = currencySymbol + tip.toFixed(2);
+        totalVal[1].innerHTML = currencySymbol + totalAmount.toFixed(2);
         //console.log(totalVal);
     }
 }
